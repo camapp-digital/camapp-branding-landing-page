@@ -1,8 +1,18 @@
 // Update these two values when the verified CamApp Digital contact links are available.
 const contactLinks = {
-  telegram: "",
-  messenger: "",
-  facebook: "",
+  telegram: "https://t.me/CamAppDigital",
+  messenger: "https://m.me/CamAppDigital",
+  facebook: "https://m.me/CamAppDigital",
+};
+
+const trustStats = {
+  projects: "100+",
+  // Replace 85+ with the real number of unique clients served before publishing.
+  businesses: "85+",
+  // Confirm the 99% satisfaction rate before publishing.
+  satisfaction: "99%",
+  // Confirm that this response time matches the actual CamApp Digital response process.
+  response: "Within 1 Hour",
 };
 
 const header = document.querySelector("[data-header]");
@@ -42,6 +52,13 @@ const copy = {
 };
 
 document.querySelector("[data-year]").textContent = new Date().getFullYear();
+
+Object.entries(trustStats).forEach(([key, value]) => {
+  const stat = document.querySelector(`[data-stat="${key}"]`);
+  if (stat) {
+    stat.textContent = value;
+  }
+});
 
 const setHeaderState = () => {
   header.classList.toggle("is-scrolled", window.scrollY > 8);

@@ -445,12 +445,42 @@ h3 {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  padding: 30px;
+  overflow: hidden;
+  padding: 34px 30px 30px;
+}
+
+.price-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(90deg, var(--gold), rgba(215, 168, 70, 0.28));
 }
 
 .price-card.featured {
   border-color: rgba(215, 168, 70, 0.72);
-  box-shadow: 0 28px 70px rgba(7, 27, 58, 0.16);
+  color: #fff;
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-soft) 100%);
+  box-shadow: 0 30px 76px rgba(7, 27, 58, 0.24);
+  transform: translateY(-10px);
+}
+
+.price-card.featured::before {
+  height: 6px;
+  background: var(--gold);
+}
+
+.recommended-badge {
+  align-self: flex-start;
+  margin: 0 0 18px;
+  padding: 6px 12px;
+  color: var(--navy);
+  background: var(--gold);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .plan-label {
@@ -468,6 +498,20 @@ h3 {
   font-size: 3rem;
   line-height: 1;
   font-weight: 950;
+}
+
+.price-card.featured h3,
+.price-card.featured .price {
+  color: #fff;
+}
+
+.price-card.featured .plan-label {
+  color: var(--gold);
+}
+
+.price-card.featured .plan-note,
+.price-card.featured li {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .price-card ul {
@@ -494,6 +538,10 @@ h3 {
   border-radius: 50%;
   background: var(--gold);
   transform: translateY(-50%);
+}
+
+.price-card.featured li::before {
+  background: #fff;
 }
 
 .price-card .button {
@@ -620,6 +668,132 @@ h3 {
   margin: 0;
   padding: 0 22px 22px;
   color: var(--muted);
+}
+
+.inquiry-section {
+  background:
+    linear-gradient(180deg, rgba(244, 247, 251, 0.96), rgba(255, 255, 255, 1)),
+    radial-gradient(circle at 15% 10%, rgba(215, 168, 70, 0.2), transparent 32%);
+}
+
+.inquiry-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+  gap: 34px;
+  align-items: start;
+}
+
+.inquiry-panel {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.inquiry-form {
+  display: grid;
+  gap: 22px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.inquiry-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--navy);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.inquiry-form input,
+.inquiry-form select,
+.inquiry-form textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  color: var(--navy);
+  background: #f8fafc;
+  border: 1px solid #d8e0eb;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 650;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.inquiry-form textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+.inquiry-form input:focus,
+.inquiry-form select:focus,
+.inquiry-form textarea:focus {
+  background: #fff;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(215, 168, 70, 0.18);
+}
+
+.inquiry-form ::placeholder {
+  color: #8895a7;
+}
+
+.summary-card {
+  margin-top: 24px;
+  padding: 24px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--navy), var(--navy-soft));
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(7, 27, 58, 0.22);
+}
+
+.summary-card[hidden] {
+  display: none;
+}
+
+.summary-card h3 {
+  color: #fff;
+}
+
+.summary-card p:not(.eyebrow) {
+  margin: 8px 0 20px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.summary-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.summary-list div {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.38fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.summary-list dt {
+  color: var(--gold);
+  font-size: 0.82rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.summary-list dd {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  overflow-wrap: anywhere;
 }
 
 .final-cta {
@@ -769,8 +943,13 @@ h3 {
   .two-column,
   .faq-layout,
   .feature-grid,
-  .pricing-grid {
+  .pricing-grid,
+  .inquiry-layout {
     grid-template-columns: 1fr;
+  }
+
+  .price-card.featured {
+    transform: none;
   }
 
   .portfolio-grid {
@@ -823,8 +1002,14 @@ h3 {
   }
 
   .feature-card,
-  .price-card {
+  .price-card,
+  .inquiry-panel {
     padding: 24px;
+  }
+
+  .form-grid,
+  .summary-list div {
+    grid-template-columns: 1fr;
   }
 
   .portfolio-grid {
