@@ -106,7 +106,11 @@ const updatePortfolioUrl = () => {
 
   const query = params.toString();
   const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
-  window.history.replaceState(null, "", nextUrl);
+  try {
+    window.history.replaceState(null, "", nextUrl);
+  } catch (error) {
+    // Keep the portfolio usable even if a browser blocks history updates.
+  }
 };
 
 const portfolioTop = () => document.querySelector("#portfolio-title") || portfolioGrid;
@@ -249,7 +253,7 @@ const renderVisiblePortfolioProjects = ({ shouldScroll = false, shouldUpdateUrl 
   updatePortfolioLiveRegion(visibleProjects.length, filteredProjects.length, totalPages);
 
   if (shouldUpdateUrl) updatePortfolioUrl();
-  if (shouldScroll) scrollToPortfolioTop();
+  if (shouldScroll) window.requestAnimationFrame(scrollToPortfolioTop);
 };
 
 const renderPortfolio = () => {
@@ -318,7 +322,10 @@ portfolioGrid?.parentElement?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-page]");
   if (!button || button.disabled) return;
 
-  portfolioState.page = Number.parseInt(button.dataset.page, 10);
+  const nextPage = Number.parseInt(button.dataset.page, 10);
+  if (!Number.isFinite(nextPage) || nextPage < 1) return;
+
+  portfolioState.page = nextPage;
   renderVisiblePortfolioProjects({ shouldScroll: true });
 });
 
