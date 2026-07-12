@@ -1109,6 +1109,76 @@ button {
   padding-left: 4px;
 }
 
+.portfolio-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin: 34px auto 0;
+  padding-bottom: 8px;
+}
+
+.portfolio-pagination[hidden] {
+  display: none;
+}
+
+.portfolio-page-button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--white);
+  background: var(--navy-850);
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.portfolio-page-button:hover:not(:disabled),
+.portfolio-page-button:focus-visible {
+  color: var(--navy-950);
+  border-color: var(--lime);
+  background: var(--lime);
+  transform: translateY(-2px);
+}
+
+.portfolio-page-button.is-active {
+  color: var(--navy-950);
+  border-color: var(--lime);
+  background: var(--lime);
+}
+
+.portfolio-page-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.portfolio-page-ellipsis {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 42px;
+  color: var(--gray-400);
+  font-weight: 800;
+}
+
+.portfolio-empty-state {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 42px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--gray-300);
+  background: var(--navy-850);
+  text-align: center;
+  font-weight: 700;
+}
+
 .project-placeholder {
   grid-template-rows: auto minmax(230px, 1fr);
 }

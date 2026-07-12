@@ -41,6 +41,11 @@ const contactToast = document.querySelector("[data-contact-toast]");
 const storedPackageKey = "camappSelectedLogoPackage";
 const isKhmerPage = document.documentElement.lang === "km";
 const portfolioData = window.camappPortfolioData || { categories: [], projects: [] };
+const portfolioState = {
+  category: "all",
+  page: 1,
+  pageSize: 9,
+};
 const copy = {
   openNavigation: isKhmerPage ? "បើកម៉ឺនុយ" : "Open navigation",
   closeNavigation: isKhmerPage ? "បិទម៉ឺនុយ" : "Close navigation",
@@ -52,6 +57,11 @@ const copy = {
     ? "សូមបំពេញប្រអប់ចាំបាច់ដែលបានសម្គាល់។"
     : "Please complete the highlighted required fields.",
   sending: isKhmerPage ? "កំពុងផ្ញើ brief ឡូហ្គោរបស់អ្នក..." : "Sending your logo brief…",
+  noPortfolioProjects: "No portfolio projects are available in this category yet.",
+  previousPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃមុន" : "Go to previous portfolio page",
+  nextPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃបន្ទាប់" : "Go to next portfolio page",
+  portfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃ" : "Go to portfolio page",
+  portfolioUpdated: isKhmerPage ? "ស្នាដៃត្រូវបានធ្វើបច្ចុប្បន្នភាព" : "Portfolio projects updated",
 };
 
 const portfolioAssetBase = (() => {
@@ -63,58 +73,235 @@ const portfolioAssetBase = (() => {
 
 const localText = (item, key) => item[`${key}${isKhmerPage ? "Km" : "En"}`] || item[`${key}En`] || "";
 
+const getPortfolioPageSize = () => {
+  if (window.matchMedia("(max-width: 640px)").matches) return 4;
+  if (window.matchMedia("(max-width: 1024px)").matches) return 6;
+  return 9;
+};
+
+const getPortfolioQueryState = () => {
+  const params = new URLSearchParams(window.location.search);
+  const category = params.get("portfolio-category") || "all";
+  const page = Number.parseInt(params.get("portfolio-page") || "1", 10);
+  return {
+    category,
+    page: Number.isFinite(page) && page > 0 ? page : 1,
+  };
+};
+
+const updatePortfolioUrl = () => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (portfolioState.page > 1) {
+    params.set("portfolio-page", String(portfolioState.page));
+  } else {
+    params.delete("portfolio-page");
+  }
+
+  if (portfolioState.category !== "all") {
+    params.set("portfolio-category", portfolioState.category);
+  } else {
+    params.delete("portfolio-category");
+  }
+
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+  window.history.replaceState(null, "", nextUrl);
+};
+
+const portfolioTop = () => document.querySelector("#portfolio-title") || portfolioGrid;
+
+const scrollToPortfolioTop = () => {
+  portfolioTop()?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const portfolioPageRange = (currentPage, totalPages) => {
+  if (totalPages <= 5) return Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  const pages = new Set([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
+  if (currentPage <= 3) {
+    pages.add(2);
+    pages.add(3);
+  }
+  if (currentPage >= totalPages - 2) {
+    pages.add(totalPages - 1);
+    pages.add(totalPages - 2);
+  }
+
+  const ordered = [...pages].filter((page) => page >= 1 && page <= totalPages).sort((a, b) => a - b);
+  return ordered.reduce((items, page, index) => {
+    if (index > 0 && page - ordered[index - 1] > 1) items.push("ellipsis");
+    items.push(page);
+    return items;
+  }, []);
+};
+
+const createPortfolioCard = (project) => {
+  const imagePath = `${portfolioAssetBase}/${project.imagePath}`;
+  const categoryLabel = isKhmerPage ? project.categoryLabelKm : project.categoryLabelEn;
+  const description = isKhmerPage ? project.descriptionKm : project.descriptionEn;
+  const altText = isKhmerPage ? project.altTextKm : project.altTextEn;
+  const ctaLabel = isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business";
+
+  return `
+    <article class="project-card reveal" data-portfolio-card data-category="${project.businessCategory}">
+      <div class="project-image">
+        <img src="${imagePath}" alt="${altText}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" />
+      </div>
+      <div class="project-content">
+        <p class="project-category">${categoryLabel}</p>
+        <h3>${project.brandName}</h3>
+        <p>${description}</p>
+        <a href="#inquiry">${ctaLabel} <span>→</span></a>
+      </div>
+    </article>
+  `;
+};
+
+const renderPortfolioPagination = (totalPages) => {
+  const pagination = document.querySelector("[data-portfolio-pagination]");
+  if (!pagination) return;
+
+  pagination.innerHTML = "";
+  pagination.hidden = totalPages <= 1;
+  if (totalPages <= 1) return;
+
+  const createButton = ({ label, page, isActive = false, isDisabled = false, ariaLabel }) => {
+    const button = document.createElement("button");
+    button.className = `portfolio-page-button${isActive ? " is-active" : ""}`;
+    button.type = "button";
+    button.textContent = label;
+    button.dataset.page = String(page);
+    button.disabled = isDisabled;
+    button.setAttribute("aria-label", ariaLabel);
+    if (isActive) button.setAttribute("aria-current", "page");
+    pagination.append(button);
+  };
+
+  createButton({
+    label: "←",
+    page: Math.max(1, portfolioState.page - 1),
+    isDisabled: portfolioState.page === 1,
+    ariaLabel: copy.previousPortfolioPage,
+  });
+
+  portfolioPageRange(portfolioState.page, totalPages).forEach((item) => {
+    if (item === "ellipsis") {
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "portfolio-page-ellipsis";
+      ellipsis.textContent = "…";
+      ellipsis.setAttribute("aria-hidden", "true");
+      pagination.append(ellipsis);
+      return;
+    }
+
+    createButton({
+      label: String(item),
+      page: item,
+      isActive: item === portfolioState.page,
+      ariaLabel: `${copy.portfolioPage} ${item}`,
+    });
+  });
+
+  createButton({
+    label: "→",
+    page: Math.min(totalPages, portfolioState.page + 1),
+    isDisabled: portfolioState.page === totalPages,
+    ariaLabel: copy.nextPortfolioPage,
+  });
+};
+
+const updatePortfolioLiveRegion = (visibleCount, totalCount, totalPages) => {
+  const liveRegion = document.querySelector("[data-portfolio-status]");
+  if (!liveRegion) return;
+
+  if (totalCount === 0) {
+    liveRegion.textContent = copy.noPortfolioProjects;
+    return;
+  }
+
+  liveRegion.textContent = `${copy.portfolioUpdated}: ${visibleCount} of ${totalCount}, page ${portfolioState.page} of ${totalPages}.`;
+};
+
+const renderVisiblePortfolioProjects = ({ shouldScroll = false, shouldUpdateUrl = true } = {}) => {
+  if (!portfolioGrid || !portfolioData.projects.length) return;
+
+  portfolioState.pageSize = getPortfolioPageSize();
+  const orderedProjects = portfolioData.projects.slice().sort((a, b) => a.displayOrder - b.displayOrder);
+  const filteredProjects =
+    portfolioState.category === "all"
+      ? orderedProjects
+      : orderedProjects.filter((project) => project.businessCategory === portfolioState.category);
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / portfolioState.pageSize));
+
+  if (portfolioState.page > totalPages) portfolioState.page = totalPages;
+  if (portfolioState.page < 1) portfolioState.page = 1;
+
+  const start = (portfolioState.page - 1) * portfolioState.pageSize;
+  const visibleProjects = filteredProjects.slice(start, start + portfolioState.pageSize);
+
+  portfolioGrid.innerHTML = visibleProjects.length
+    ? visibleProjects.map(createPortfolioCard).join("")
+    : `<p class="portfolio-empty-state">${copy.noPortfolioProjects}</p>`;
+
+  projectCards = Array.from(portfolioGrid.querySelectorAll("[data-portfolio-card]"));
+  renderPortfolioPagination(totalPages);
+  updatePortfolioLiveRegion(visibleProjects.length, filteredProjects.length, totalPages);
+
+  if (shouldUpdateUrl) updatePortfolioUrl();
+  if (shouldScroll) scrollToPortfolioTop();
+};
+
 const renderPortfolio = () => {
   if (!filterBar || !portfolioGrid || !portfolioData.projects.length) return;
 
   const usedCategories = new Set(portfolioData.projects.map((project) => project.businessCategory));
   const activeCategories = portfolioData.categories.filter((category) => usedCategories.has(category.id));
   const allLabel = isKhmerPage ? "ទាំងអស់" : "All";
-  const ctaLabel = isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business";
+  const queryState = getPortfolioQueryState();
+  const validCategories = new Set(["all", ...activeCategories.map((category) => category.id)]);
+  portfolioState.category = validCategories.has(queryState.category) ? queryState.category : "all";
+  portfolioState.page = queryState.page;
+  portfolioState.pageSize = getPortfolioPageSize();
+
+  if (!document.querySelector("[data-portfolio-pagination]")) {
+    const pagination = document.createElement("nav");
+    pagination.className = "portfolio-pagination";
+    pagination.dataset.portfolioPagination = "";
+    pagination.setAttribute("aria-label", isKhmerPage ? "ទំព័រស្នាដៃ" : "Portfolio pagination");
+    portfolioGrid.after(pagination);
+  }
+
+  if (!document.querySelector("[data-portfolio-status]")) {
+    const status = document.createElement("p");
+    status.className = "sr-only";
+    status.dataset.portfolioStatus = "";
+    status.setAttribute("aria-live", "polite");
+    portfolioGrid.after(status);
+  }
 
   filterBar.innerHTML = "";
   [{ id: "all", labelEn: "All", labelKm: "ទាំងអស់" }, ...activeCategories].forEach((category, index) => {
     const button = document.createElement("button");
-    button.className = `filter-button${index === 0 ? " is-active" : ""}`;
+    const isActive = category.id === portfolioState.category;
+    button.className = `filter-button${isActive ? " is-active" : ""}`;
     button.type = "button";
     button.dataset.filter = category.id;
-    button.setAttribute("aria-pressed", String(index === 0));
+    button.setAttribute("aria-pressed", String(isActive));
     button.textContent = category.id === "all" ? allLabel : localText(category, "label");
     filterBar.append(button);
   });
 
-  portfolioGrid.innerHTML = portfolioData.projects
-    .slice()
-    .sort((a, b) => a.displayOrder - b.displayOrder)
-    .map((project) => {
-      const imagePath = `${portfolioAssetBase}/${project.imagePath}`;
-      const categoryLabel = isKhmerPage ? project.categoryLabelKm : project.categoryLabelEn;
-      const description = isKhmerPage ? project.descriptionKm : project.descriptionEn;
-      const altText = isKhmerPage ? project.altTextKm : project.altTextEn;
-
-      return `
-        <article class="project-card reveal" data-portfolio-card data-category="${project.businessCategory}">
-          <div class="project-image">
-            <img src="${imagePath}" alt="${altText}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" />
-          </div>
-          <div class="project-content">
-            <p class="project-category">${categoryLabel}</p>
-            <h3>${project.brandName}</h3>
-            <p>${description}</p>
-            <a href="#inquiry">${ctaLabel} <span>→</span></a>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
-
   filterButtons = Array.from(filterBar.querySelectorAll("[data-filter]"));
-  projectCards = Array.from(portfolioGrid.querySelectorAll("[data-portfolio-card]"));
+  renderVisiblePortfolioProjects();
 };
 
 const setupPortfolioFilters = () => {
   filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const category = button.dataset.filter;
+      portfolioState.category = category;
+      portfolioState.page = 1;
 
       filterButtons.forEach((item) => {
         const isActive = item === button;
@@ -122,12 +309,26 @@ const setupPortfolioFilters = () => {
         item.setAttribute("aria-pressed", String(isActive));
       });
 
-      projectCards.forEach((card) => {
-        card.hidden = category !== "all" && card.dataset.category !== category;
-      });
+      renderVisiblePortfolioProjects({ shouldScroll: true });
     });
   });
 };
+
+portfolioGrid?.parentElement?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-page]");
+  if (!button || button.disabled) return;
+
+  portfolioState.page = Number.parseInt(button.dataset.page, 10);
+  renderVisiblePortfolioProjects({ shouldScroll: true });
+});
+
+window.addEventListener("resize", () => {
+  const nextPageSize = getPortfolioPageSize();
+  if (nextPageSize === portfolioState.pageSize) return;
+
+  portfolioState.pageSize = nextPageSize;
+  renderVisiblePortfolioProjects();
+});
 
 document.querySelector("[data-year]").textContent = new Date().getFullYear();
 
