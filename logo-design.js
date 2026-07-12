@@ -18,8 +18,10 @@ const trustStats = {
 const header = document.querySelector("[data-header]");
 const menuButton = document.querySelector("[data-menu-button]");
 const navigation = document.querySelector("[data-navigation]");
-const filterButtons = document.querySelectorAll("[data-filter]");
-const projectCards = document.querySelectorAll("[data-category]");
+const filterBar = document.querySelector("[data-filters]");
+const portfolioGrid = document.querySelector("[data-portfolio-grid]");
+let filterButtons = [];
+let projectCards = [];
 const packageButtons = document.querySelectorAll("[data-package]");
 const packageCards = document.querySelectorAll("[data-package-card]");
 const packageSelect = document.querySelector("[data-package-select]");
@@ -38,6 +40,7 @@ const useFieldset = document.querySelector("[data-use-error]")?.closest("fieldse
 const contactToast = document.querySelector("[data-contact-toast]");
 const storedPackageKey = "camappSelectedLogoPackage";
 const isKhmerPage = document.documentElement.lang === "km";
+const portfolioData = window.camappPortfolioData || { categories: [], projects: [] };
 const copy = {
   openNavigation: isKhmerPage ? "បើកម៉ឺនុយ" : "Open navigation",
   closeNavigation: isKhmerPage ? "បិទម៉ឺនុយ" : "Close navigation",
@@ -49,6 +52,81 @@ const copy = {
     ? "សូមបំពេញប្រអប់ចាំបាច់ដែលបានសម្គាល់។"
     : "Please complete the highlighted required fields.",
   sending: isKhmerPage ? "កំពុងផ្ញើ brief ឡូហ្គោរបស់អ្នក..." : "Sending your logo brief…",
+};
+
+const portfolioAssetBase = (() => {
+  const path = window.location.pathname;
+  if (path.includes("/logo-design/en/")) return "../../assets";
+  if (path.includes("/logo-design/")) return "../assets";
+  return "assets";
+})();
+
+const localText = (item, key) => item[`${key}${isKhmerPage ? "Km" : "En"}`] || item[`${key}En`] || "";
+
+const renderPortfolio = () => {
+  if (!filterBar || !portfolioGrid || !portfolioData.projects.length) return;
+
+  const usedCategories = new Set(portfolioData.projects.map((project) => project.businessCategory));
+  const activeCategories = portfolioData.categories.filter((category) => usedCategories.has(category.id));
+  const allLabel = isKhmerPage ? "ទាំងអស់" : "All";
+  const ctaLabel = isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business";
+
+  filterBar.innerHTML = "";
+  [{ id: "all", labelEn: "All", labelKm: "ទាំងអស់" }, ...activeCategories].forEach((category, index) => {
+    const button = document.createElement("button");
+    button.className = `filter-button${index === 0 ? " is-active" : ""}`;
+    button.type = "button";
+    button.dataset.filter = category.id;
+    button.setAttribute("aria-pressed", String(index === 0));
+    button.textContent = category.id === "all" ? allLabel : localText(category, "label");
+    filterBar.append(button);
+  });
+
+  portfolioGrid.innerHTML = portfolioData.projects
+    .slice()
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .map((project) => {
+      const imagePath = `${portfolioAssetBase}/${project.imagePath}`;
+      const categoryLabel = isKhmerPage ? project.categoryLabelKm : project.categoryLabelEn;
+      const description = isKhmerPage ? project.descriptionKm : project.descriptionEn;
+      const altText = isKhmerPage ? project.altTextKm : project.altTextEn;
+
+      return `
+        <article class="project-card reveal" data-portfolio-card data-category="${project.businessCategory}">
+          <div class="project-image">
+            <img src="${imagePath}" alt="${altText}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" />
+          </div>
+          <div class="project-content">
+            <p class="project-category">${categoryLabel}</p>
+            <h3>${project.brandName}</h3>
+            <p>${description}</p>
+            <a href="#inquiry">${ctaLabel} <span>→</span></a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  filterButtons = Array.from(filterBar.querySelectorAll("[data-filter]"));
+  projectCards = Array.from(portfolioGrid.querySelectorAll("[data-portfolio-card]"));
+};
+
+const setupPortfolioFilters = () => {
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const category = button.dataset.filter;
+
+      filterButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-pressed", String(isActive));
+      });
+
+      projectCards.forEach((card) => {
+        card.hidden = category !== "all" && card.dataset.category !== category;
+      });
+    });
+  });
 };
 
 document.querySelector("[data-year]").textContent = new Date().getFullYear();
@@ -84,22 +162,8 @@ navigation.addEventListener("click", (event) => {
   }
 });
 
-filterButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const category = button.dataset.filter;
-
-    filterButtons.forEach((item) => {
-      const isActive = item === button;
-      item.classList.toggle("is-active", isActive);
-      item.setAttribute("aria-pressed", String(isActive));
-    });
-
-    projectCards.forEach((card) => {
-      const categories = card.dataset.category.split(" ");
-      card.hidden = category !== "all" && !categories.includes(category);
-    });
-  });
-});
+renderPortfolio();
+setupPortfolioFilters();
 
 const packagePrices = {
   "Basic Package": "$49",

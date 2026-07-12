@@ -983,10 +983,9 @@ button {
 
 .filter-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 30px;
-  overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .filter-button {
@@ -2354,8 +2353,7 @@ thead .popular-column {
   }
 
   .filter-bar {
-    margin-right: -14px;
-    padding-right: 14px;
+    gap: 7px;
   }
 
   .package-card {
