@@ -71,6 +71,46 @@ const portfolioAssetBase = (() => {
   return "assets";
 })();
 
+let revealObserver;
+
+const revealElements = (items) => {
+  const elements = Array.from(items).filter((item) => item && !item.classList.contains("is-visible"));
+  if (!elements.length) return;
+
+  const shouldAnimate =
+    "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!shouldAnimate) {
+    elements.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
+  }
+
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  elements.forEach((item) => {
+    const rect = item.getBoundingClientRect();
+    if (rect.top < viewportHeight && rect.bottom > 0) {
+      item.classList.add("is-visible");
+      return;
+    }
+
+    revealObserver.observe(item);
+  });
+};
+
 const localText = (item, key) => item[`${key}${isKhmerPage ? "Km" : "En"}`] || item[`${key}En`] || "";
 
 const getPortfolioPageSize = () => {
@@ -249,6 +289,7 @@ const renderVisiblePortfolioProjects = ({ shouldScroll = false, shouldUpdateUrl 
     : `<p class="portfolio-empty-state">${copy.noPortfolioProjects}</p>`;
 
   projectCards = Array.from(portfolioGrid.querySelectorAll("[data-portfolio-card]"));
+  revealElements(projectCards);
   renderPortfolioPagination(totalPages);
   updatePortfolioLiveRegion(visibleProjects.length, filteredProjects.length, totalPages);
 
@@ -544,24 +585,7 @@ document.querySelector("[data-new-inquiry]").addEventListener("click", () => {
   form.querySelector("input").focus();
 });
 
-const revealItems = document.querySelectorAll(".reveal");
-if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.08 }
-  );
-
-  revealItems.forEach((item) => observer.observe(item));
-} else {
-  revealItems.forEach((item) => item.classList.add("is-visible"));
-}
+revealElements(document.querySelectorAll(".reveal"));
 
 window.addEventListener("scroll", setHeaderState, { passive: true });
 window.addEventListener("resize", () => {
