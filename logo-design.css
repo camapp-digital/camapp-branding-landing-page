@@ -1813,13 +1813,16 @@ thead .popular-column {
 }
 
 .choice-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px 36px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
 }
 
 .choice-grid .choice {
+  flex: 0 0 auto;
   margin: 0;
+  white-space: nowrap;
 }
 
 .field-error {
@@ -2479,8 +2482,11 @@ thead .popular-column {
   }
 
   .choice-grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: 14px;
+  }
+
+  .choice-grid .choice {
+    flex: 1 1 calc(50% - 14px);
   }
 
   .form-grid fieldset > .choice:not(.choice-grid .choice) {
@@ -3462,5 +3468,11 @@ tbody th {
 
   .client-placeholder {
     aspect-ratio: 16 / 8;
+  }
+}
+
+@media (max-width: 460px) {
+  .choice-grid .choice {
+    flex-basis: 100%;
   }
 }
