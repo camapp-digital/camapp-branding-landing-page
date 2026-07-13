@@ -1,112 +1,63 @@
 const header = document.querySelector("[data-header]");
 const menuButton = document.querySelector(".menu-toggle");
 const nav = document.querySelector(".site-nav");
-const faqItems = document.querySelectorAll(".faq-item");
 const revealItems = document.querySelectorAll(".reveal");
-const inquiryForms = document.querySelectorAll("[data-inquiry-form]");
+const contactForm = document.querySelector("[data-contact-form]");
+const formStatus = document.querySelector("[data-form-status]");
 
 const updateHeader = () => {
   header.classList.toggle("is-scrolled", window.scrollY > 8);
 };
 
+const closeMenu = () => {
+  nav.classList.remove("is-open");
+  menuButton.setAttribute("aria-expanded", "false");
+  menuButton.setAttribute("aria-label", "Open navigation");
+};
+
 menuButton.addEventListener("click", () => {
   const isOpen = nav.classList.toggle("is-open");
   menuButton.setAttribute("aria-expanded", String(isOpen));
+  menuButton.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
 });
 
 nav.addEventListener("click", (event) => {
-  if (event.target.matches("a")) {
-    nav.classList.remove("is-open");
-    menuButton.setAttribute("aria-expanded", "false");
+  if (event.target.matches("a")) closeMenu();
+});
+
+contactForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(contactForm);
+  const service = data.get("service") || "your design request";
+  formStatus.textContent = `Thank you. CamApp Digital received your ${service} request and will contact you shortly.`;
+  contactForm.reset();
+});
+
+const revealElements = (items) => {
+  if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    items.forEach((item) => item.classList.add("is-visible"));
+    return;
   }
-});
 
-faqItems.forEach((item) => {
-  const button = item.querySelector("button");
-  const answer = item.querySelector(".faq-answer");
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
 
-  button.addEventListener("click", () => {
-    const isOpen = item.classList.toggle("is-open");
-    button.setAttribute("aria-expanded", String(isOpen));
-    answer.style.maxHeight = isOpen ? `${answer.scrollHeight}px` : "0";
-  });
-});
-
-const inquiryFieldLabels = {
-  en: [
-    ["clientName", "Client name"],
-    ["businessName", "Business name"],
-    ["contactHandle", "Phone or Telegram"],
-    ["email", "Email"],
-    ["serviceNeeded", "Service needed"],
-    ["industry", "Business industry"],
-    ["targetCustomers", "Target customers"],
-    ["preferredColors", "Preferred colors"],
-    ["stylePreference", "Style preference"],
-    ["budgetRange", "Budget range"],
-    ["deadline", "Deadline"],
-    ["notes", "Additional notes"],
-  ],
-  km: [
-    ["clientName", "ឈ្មោះអតិថិជន"],
-    ["businessName", "ឈ្មោះអាជីវកម្ម"],
-    ["contactHandle", "លេខទូរស័ព្ទ ឬ Telegram"],
-    ["email", "អ៊ីមែល"],
-    ["serviceNeeded", "សេវាដែលត្រូវការ"],
-    ["industry", "ប្រភេទអាជីវកម្ម"],
-    ["targetCustomers", "អតិថិជនគោលដៅ"],
-    ["preferredColors", "ពណ៌ដែលចូលចិត្ត"],
-    ["stylePreference", "រចនាប័ទ្មដែលចូលចិត្ត"],
-    ["budgetRange", "ជួរថវិកា"],
-    ["deadline", "ថ្ងៃផុតកំណត់"],
-    ["notes", "កំណត់ចំណាំបន្ថែម"],
-  ],
+  items.forEach((item) => revealObserver.observe(item));
 };
 
-const emptyValueText = document.documentElement.lang === "km" ? "មិនបានបញ្ជាក់" : "Not provided";
-const activeInquiryLabels =
-  document.documentElement.lang === "km" ? inquiryFieldLabels.km : inquiryFieldLabels.en;
-
-inquiryForms.forEach((form) => {
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const panel = form.closest(".inquiry-panel");
-    const summary = panel.querySelector("[data-inquiry-summary]");
-    const summaryList = panel.querySelector("[data-summary-list]");
-    const formData = new FormData(form);
-
-    summaryList.replaceChildren();
-
-    activeInquiryLabels.forEach(([name, label]) => {
-      const row = document.createElement("div");
-      const term = document.createElement("dt");
-      const description = document.createElement("dd");
-      const value = String(formData.get(name) || "").trim();
-
-      term.textContent = label;
-      description.textContent = value || emptyValueText;
-      row.append(term, description);
-      summaryList.append(row);
-    });
-
-    summary.hidden = false;
-    summary.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
+window.addEventListener("scroll", updateHeader, { passive: true });
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 900) closeMenu();
 });
 
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.16 }
-);
-
-revealItems.forEach((item) => revealObserver.observe(item));
-window.addEventListener("scroll", updateHeader, { passive: true });
 updateHeader();
+revealElements(revealItems);
