@@ -1717,7 +1717,7 @@ thead .popular-column {
 
 .form-panel {
   min-width: 0;
-  padding: 32px;
+  padding: 36px 40px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--navy-850);
@@ -1726,7 +1726,7 @@ thead .popular-column {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 21px 18px;
+  gap: 24px 22px;
 }
 
 .form-grid > label,
@@ -1737,20 +1737,20 @@ thead .popular-column {
 
 .form-grid > label {
   display: grid;
-  gap: 8px;
+  gap: 11px;
   color: var(--gray-100);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .form-grid input:not([type="radio"], [type="checkbox"], [type="file"]),
 .form-grid select,
 .form-grid textarea {
   width: 100%;
-  min-height: 48px;
-  padding: 11px 13px;
+  min-height: 58px;
+  padding: 14px 16px;
   border: 1px solid var(--line-strong);
-  border-radius: 5px;
+  border-radius: 6px;
   color: var(--white);
   background: var(--navy-950);
   outline: none;
@@ -1758,7 +1758,7 @@ thead .popular-column {
 }
 
 .form-grid textarea {
-  min-height: 105px;
+  min-height: 126px;
   resize: vertical;
 }
 
@@ -1781,25 +1781,25 @@ thead .popular-column {
 }
 
 .form-grid fieldset {
-  padding: 14px;
+  padding: 20px 22px 18px;
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: 6px;
 }
 
 .form-grid legend {
-  padding: 0 7px;
+  padding: 0 8px;
   color: var(--gray-100);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .choice {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   color: var(--gray-300);
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .choice + .choice {
@@ -1807,15 +1807,15 @@ thead .popular-column {
 }
 
 .choice input {
-  width: 18px;
-  height: 18px;
+  width: 21px;
+  height: 21px;
   accent-color: var(--lime);
 }
 
 .choice-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 16px 36px;
 }
 
 .choice-grid .choice {
@@ -1851,8 +1851,11 @@ thead .popular-column {
   font-size: 0.72rem;
 }
 
-.consent {
-  margin: 24px 0 0;
+.form-consent-note {
+  margin: 22px 0 0;
+  color: var(--gray-300);
+  font-size: 0.84rem;
+  line-height: 1.7;
 }
 
 .form-status {
@@ -2464,7 +2467,7 @@ thead .popular-column {
   }
 
   .form-panel {
-    padding: 22px 16px;
+    padding: 24px 16px;
   }
 
   .form-grid {
@@ -2477,6 +2480,7 @@ thead .popular-column {
 
   .choice-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 
   .form-grid fieldset > .choice:not(.choice-grid .choice) {
@@ -3082,6 +3086,10 @@ thead .popular-column {
   color: var(--muted);
 }
 
+.form-consent-note {
+  color: var(--muted);
+}
+
 .success-panel p {
   color: var(--muted);
 }
@@ -3432,6 +3440,10 @@ tbody th {
 
 .form-grid select {
   color-scheme: dark;
+}
+
+.form-consent-note {
+  color: var(--gray-300);
 }
 
 .site-footer {

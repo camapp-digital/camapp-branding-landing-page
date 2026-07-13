@@ -11,7 +11,7 @@
     <title>សេវារចនាឡូហ្គោអាជីព | CamApp Digital</title>
     <link rel="icon" href="../assets/camapp-logo.png" />
     <link rel="preload" as="image" href="../assets/portfolio-coffee.jpg" />
-  <link rel="stylesheet" href="../logo-design.css?v=13" />
+  <link rel="stylesheet" href="../logo-design.css?v=14" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">រំលងទៅមាតិកាសំខាន់</a>
@@ -403,11 +403,10 @@
           <div class="form-panel reveal">
             <form class="logo-form" data-logo-form novalidate>
               <div class="form-grid">
-                <label>ឈ្មោះពេញ *<input type="text" name="fullName" autocomplete="name" required /></label>
-                <label>ឈ្មោះអាជីវកម្ម *<input type="text" name="businessName" autocomplete="organization" required /></label>
-                <label>លេខទូរស័ព្ទ *<input type="tel" name="phone" autocomplete="tel" required /></label>
-                <label>អាសយដ្ឋានអ៊ីមែល *<input type="email" name="email" autocomplete="email" required /></label>
-                <label class="field-wide">Telegram ឬ Facebook សម្រាប់ទំនាក់ទំនង<input type="text" name="socialContact" placeholder="@username ឬតំណប្រូហ្វាល់" /></label>
+                <label>ឈ្មោះរបស់អ្នក *<input type="text" name="fullName" autocomplete="name" required /></label>
+                <label>ឈ្មោះឡូហ្គោ *<input type="text" name="businessName" autocomplete="organization" required /></label>
+                <label>លេខទូរស័ព្ទ (Telegram) *<input type="tel" name="phone" autocomplete="tel" required /></label>
+                <label>អាសយដ្ឋានអ៊ីមែល<input type="email" name="email" autocomplete="email" /></label>
                 <label>ប្រភេទអាជីវកម្ម *
                   <select name="businessCategory" required>
                     <option value="">ជ្រើសប្រភេទ</option><option>អាហារ និងភេសជ្ជៈ</option><option>សម្រស់ និងម៉ូដ</option>
@@ -438,30 +437,22 @@
                 </label>
                 <label>ពណ៌ដែលចូលចិត្ត<input type="text" name="preferredColors" placeholder="ឧទាហរណ៍៖ ខៀវ navy និងមាស" /></label>
                 <label>ពណ៌ដែលត្រូវជៀសវាង<input type="text" name="colorsAvoid" /></label>
-                <label>អត្ថបទដែលត្រូវដាក់ក្នុងឡូហ្គោ *<input type="text" name="logoText" required /></label>
+                <label>អត្ថបទដែលត្រូវដាក់ក្នុងឡូហ្គោ<input type="text" name="logoText" /></label>
                 <fieldset class="field-wide">
                   <legend>តើឡូហ្គោនឹងប្រើនៅទីណា? *</legend>
                   <div class="choice-grid">
                     <label class="choice"><input type="checkbox" name="logoUse" value="បណ្តាញសង្គម" /> បណ្តាញសង្គម</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="កាតអាជីវកម្ម" /> កាតអាជីវកម្ម</label>
-                    <label class="choice"><input type="checkbox" name="logoUse" value="ស្លាកយីហោ" /> ស្លាកយីហោ</label>
+                    <label class="choice"><input type="checkbox" name="logoUse" value="បោះពុម្ព" /> បោះពុម្ព</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="វេចខ្ចប់" /> វេចខ្ចប់</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="ឯកសណ្ឋាន" /> ឯកសណ្ឋាន</label>
-                    <label class="choice"><input type="checkbox" name="logoUse" value="Other printing" /> ការបោះពុម្ពផ្សេងៗ</label>
                   </div>
                   <span class="field-error" data-use-error>សូមជ្រើសការប្រើប្រាស់យ៉ាងហោចណាស់មួយ។</span>
                 </fieldset>
-                <label class="field-wide file-input">ផ្ទុករូបភាពយោង
-                  <input type="file" name="referenceImage" accept="image/png,image/jpeg,image/webp,application/pdf" data-file-input />
-                  <span data-file-name>PNG, JPEG, WebP ឬ PDF · អតិបរមា 10 MB</span>
-                </label>
-                <label>ថ្ងៃចង់ឱ្យបញ្ចប់<input type="date" name="completionDate" /></label>
-                <label class="field-wide">កំណត់ចំណាំបន្ថែម<textarea name="additionalNotes" rows="4"></textarea></label>
               </div>
-              <label class="consent choice">
-                <input type="checkbox" name="consent" required />
-                ខ្ញុំបញ្ជាក់ថាព័ត៌មាននេះត្រឹមត្រូវ ហើយអាចប្រើសម្រាប់ឆ្លើយតបសំណើនេះ។
-              </label>
+              <p class="form-consent-note">
+                តាមរយៈការផ្ញើទម្រង់នេះ អ្នកអនុញ្ញាតឱ្យ CamApp Digital ទាក់ទងអ្នកអំពីសំណើរចនារបស់អ្នក។
+              </p>
               <div class="form-status" data-form-status role="status" aria-live="polite"></div>
               <button class="button button-accent submit-button" type="submit">
                 <span>ស្នើសុំរចនាឡូហ្គោរបស់ខ្ញុំ</span><span class="button-loader" aria-hidden="true"></span>
@@ -510,6 +501,6 @@
     </div>
 
     <script src="../portfolio-data.js?v=2"></script>
-    <script src="../logo-design.js?v=8"></script>
+    <script src="../logo-design.js?v=9"></script>
   </body>
 </html>

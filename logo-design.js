@@ -497,22 +497,22 @@ document.querySelectorAll("[data-open-contact]").forEach((button) => {
   });
 });
 
-fileInput.addEventListener("change", () => {
+fileInput?.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (!file) {
-    fileName.textContent = copy.defaultFileName;
+    if (fileName) fileName.textContent = copy.defaultFileName;
     return;
   }
 
   if (file.size > 10 * 1024 * 1024) {
     fileInput.value = "";
-    fileName.textContent = copy.largeFile;
+    if (fileName) fileName.textContent = copy.largeFile;
     fileInput.closest("label").classList.add("is-invalid");
     return;
   }
 
   fileInput.closest("label").classList.remove("is-invalid");
-  fileName.textContent = file.name;
+  if (fileName) fileName.textContent = file.name;
 });
 
 const clearInvalidState = (field) => {
@@ -579,7 +579,7 @@ document.querySelector("[data-new-inquiry]").addEventListener("click", () => {
   successPanel.hidden = true;
   selectionDisplay.hidden = true;
   packageCards.forEach((card) => card.classList.remove("is-selected"));
-  fileName.textContent = copy.defaultFileName;
+  if (fileName) fileName.textContent = copy.defaultFileName;
   formStatus.textContent = "";
   form.querySelector("input").focus();
 });

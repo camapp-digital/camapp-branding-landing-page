@@ -11,7 +11,7 @@
     <title>Professional Logo Design Services | CamApp Digital</title>
     <link rel="icon" href="assets/camapp-logo.png" />
     <link rel="preload" as="image" href="assets/portfolio-coffee.jpg" />
-  <link rel="stylesheet" href="logo-design.css?v=13" />
+  <link rel="stylesheet" href="logo-design.css?v=14" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -405,11 +405,10 @@
           <div class="form-panel reveal">
             <form class="logo-form" data-logo-form novalidate>
               <div class="form-grid">
-                <label>Full name *<input type="text" name="fullName" autocomplete="name" required /></label>
-                <label>Business name *<input type="text" name="businessName" autocomplete="organization" required /></label>
-                <label>Phone number *<input type="tel" name="phone" autocomplete="tel" required /></label>
-                <label>Email address *<input type="email" name="email" autocomplete="email" required /></label>
-                <label class="field-wide">Telegram or Facebook contact<input type="text" name="socialContact" placeholder="@username or profile link" /></label>
+                <label>Your name *<input type="text" name="fullName" autocomplete="name" required /></label>
+                <label>Logo name *<input type="text" name="businessName" autocomplete="organization" required /></label>
+                <label>Phone number (Telegram) *<input type="tel" name="phone" autocomplete="tel" required /></label>
+                <label>Email address<input type="email" name="email" autocomplete="email" /></label>
                 <label>Business category *
                   <select name="businessCategory" required>
                     <option value="">Select a category</option><option>Food and beverage</option><option>Beauty and fashion</option>
@@ -440,30 +439,22 @@
                 </label>
                 <label>Preferred colors<input type="text" name="preferredColors" placeholder="Example: navy and gold" /></label>
                 <label>Colors to avoid<input type="text" name="colorsAvoid" /></label>
-                <label>Text to include in the logo *<input type="text" name="logoText" required /></label>
+                <label>Text to include in the logo<input type="text" name="logoText" /></label>
                 <fieldset class="field-wide">
                   <legend>Where will the logo be used? *</legend>
                   <div class="choice-grid">
                     <label class="choice"><input type="checkbox" name="logoUse" value="Social media" /> Social media</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="Business cards" /> Business cards</label>
-                    <label class="choice"><input type="checkbox" name="logoUse" value="Signage" /> Signage</label>
+                    <label class="choice"><input type="checkbox" name="logoUse" value="Printing" /> Printing</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="Packaging" /> Packaging</label>
                     <label class="choice"><input type="checkbox" name="logoUse" value="Uniforms" /> Uniforms</label>
-                    <label class="choice"><input type="checkbox" name="logoUse" value="Printing" /> Other printing</label>
                   </div>
                   <span class="field-error" data-use-error>Please choose at least one use.</span>
                 </fieldset>
-                <label class="field-wide file-input">Reference image upload
-                  <input type="file" name="referenceImage" accept="image/png,image/jpeg,image/webp,application/pdf" data-file-input />
-                  <span data-file-name>PNG, JPEG, WebP, or PDF · Maximum 10 MB</span>
-                </label>
-                <label>Desired completion date<input type="date" name="completionDate" /></label>
-                <label class="field-wide">Additional notes<textarea name="additionalNotes" rows="4"></textarea></label>
               </div>
-              <label class="consent choice">
-                <input type="checkbox" name="consent" required />
-                I confirm that the information is accurate and may be used to respond to this inquiry.
-              </label>
+              <p class="form-consent-note">
+                By submitting this form, you allow CamApp Digital to contact you about your design request.
+              </p>
               <div class="form-status" data-form-status role="status" aria-live="polite"></div>
               <button class="button button-accent submit-button" type="submit">
                 <span>Request My Logo Design</span><span class="button-loader" aria-hidden="true"></span>
@@ -512,6 +503,6 @@
     </div>
 
     <script src="portfolio-data.js?v=2"></script>
-    <script src="logo-design.js?v=8"></script>
+    <script src="logo-design.js?v=9"></script>
   </body>
 </html>
