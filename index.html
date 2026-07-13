@@ -10,7 +10,7 @@
     />
     <link rel="icon" href="assets/camapp-logo.png" />
     <link rel="preload" as="image" href="assets/pka-romdoul-coffee-mockup.png" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -253,19 +253,22 @@
             </div>
           </div>
           <div class="contact-panel reveal">
-            <form class="contact-form" data-contact-form>
+            <form class="contact-form" data-contact-form novalidate>
               <div class="form-grid">
                 <label>
                   Your name
                   <input type="text" name="name" autocomplete="name" required />
+                  <span class="field-error" data-error-for="name"></span>
                 </label>
                 <label>
                   Business name
                   <input type="text" name="business" autocomplete="organization" required />
+                  <span class="field-error" data-error-for="business"></span>
                 </label>
                 <label>
                   Phone or Telegram
                   <input type="text" name="contact" autocomplete="tel" required />
+                  <span class="field-error" data-error-for="contact"></span>
                 </label>
                 <label>
                   Service needed
@@ -276,14 +279,22 @@
                     <option>Website Design</option>
                     <option>Landing Pages</option>
                   </select>
+                  <span class="field-error" data-error-for="service"></span>
                 </label>
                 <label class="field-wide">
                   Project notes
                   <textarea name="notes" rows="4" placeholder="Tell us about your business, deadline, and what you need." required></textarea>
+                  <span class="field-error" data-error-for="notes"></span>
                 </label>
               </div>
-              <button class="button button-accent" type="submit">Submit Request</button>
+              <button class="button button-accent" type="submit" data-submit-button>Submit Request</button>
               <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+              <div class="telegram-fallback" data-telegram-fallback hidden>
+                <a class="button button-outline" href="https://t.me/CamAppDigital" target="_blank" rel="noopener" data-telegram-link>
+                  Open Telegram
+                </a>
+                <button class="button button-outline" type="button" data-copy-request>Copy Request</button>
+              </div>
             </form>
           </div>
         </div>
@@ -301,6 +312,6 @@
       </div>
     </footer>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
   </body>
 </html>
