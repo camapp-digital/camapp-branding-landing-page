@@ -11,7 +11,7 @@
     <title>Professional Logo Design Services | CamApp Digital</title>
     <link rel="icon" href="assets/camapp-logo.png" />
     <link rel="preload" as="image" href="assets/portfolio-coffee.jpg" />
-  <link rel="stylesheet" href="logo-design.css?v=15" />
+  <link rel="stylesheet" href="logo-design.css?v=16" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -461,11 +461,33 @@
               </button>
             </form>
 
-            <div class="success-panel" data-success-panel hidden tabindex="-1">
+            <div class="success-panel proposal-panel" data-success-panel hidden tabindex="-1">
+              <div class="proposal-brand">
+                <img src="assets/camapp-logo.png" alt="" width="42" height="42" />
+                <div>
+                  <span>CamApp Digital</span>
+                  <small>Logo design proposal</small>
+                </div>
+              </div>
               <span class="success-mark" aria-hidden="true">✓</span>
-              <h3>Thank you.</h3>
-              <p>Your logo design request has been received. CamApp Digital will review your information and contact you shortly.</p>
-              <button class="button button-outline" type="button" data-new-inquiry>Send Another Inquiry</button>
+              <h3 data-proposal-title>Your proposal preview is ready.</h3>
+              <p data-proposal-summary>Review the proposal below, then send it to CamApp Digital on Telegram.</p>
+              <div class="proposal-preview" data-proposal-preview>
+                <div class="proposal-meta">
+                  <span data-proposal-id></span>
+                  <span data-proposal-date></span>
+                </div>
+                <dl class="proposal-fields" data-proposal-fields></dl>
+                <div class="proposal-note">
+                  CamApp Digital will review this request and confirm scope, timeline, and payment details before design begins.
+                </div>
+              </div>
+              <div class="proposal-actions">
+                <button class="button button-accent" type="button" data-send-telegram>Send to Telegram</button>
+                <button class="button button-outline" type="button" data-copy-proposal>Copy Proposal</button>
+                <button class="button button-ghost" type="button" data-new-inquiry>Start New Proposal</button>
+              </div>
+              <p class="proposal-status" data-proposal-status role="status" aria-live="polite"></p>
             </div>
           </div>
         </div>
@@ -503,6 +525,6 @@
     </div>
 
     <script src="portfolio-data.js?v=2"></script>
-    <script src="logo-design.js?v=9"></script>
+    <script src="logo-design.js?v=10"></script>
   </body>
 </html>

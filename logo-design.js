@@ -34,11 +34,20 @@ const formPanel = document.querySelector(".form-panel");
 const successPanel = document.querySelector("[data-success-panel]");
 const formStatus = document.querySelector("[data-form-status]");
 const submitButton = document.querySelector(".submit-button");
+const proposalTitle = document.querySelector("[data-proposal-title]");
+const proposalSummary = document.querySelector("[data-proposal-summary]");
+const proposalId = document.querySelector("[data-proposal-id]");
+const proposalDate = document.querySelector("[data-proposal-date]");
+const proposalFields = document.querySelector("[data-proposal-fields]");
+const proposalStatus = document.querySelector("[data-proposal-status]");
+const sendTelegramButton = document.querySelector("[data-send-telegram]");
+const copyProposalButton = document.querySelector("[data-copy-proposal]");
 const fileInput = document.querySelector("[data-file-input]");
 const fileName = document.querySelector("[data-file-name]");
 const useFieldset = document.querySelector("[data-use-error]")?.closest("fieldset");
 const contactToast = document.querySelector("[data-contact-toast]");
 const storedPackageKey = "camappSelectedLogoPackage";
+let latestProposalText = "";
 const isKhmerPage = document.documentElement.lang === "km";
 const portfolioData = window.camappPortfolioData || { categories: [], projects: [] };
 const portfolioState = {
@@ -56,12 +65,19 @@ const copy = {
   requiredFields: isKhmerPage
     ? "សូមបំពេញប្រអប់ចាំបាច់ដែលបានសម្គាល់។"
     : "Please complete the highlighted required fields.",
-  sending: isKhmerPage ? "កំពុងផ្ញើ brief ឡូហ្គោរបស់អ្នក..." : "Sending your logo brief…",
+  sending: isKhmerPage ? "កំពុងបង្កើតសំណើររបស់អ្នក..." : "Generating your proposal…",
   noPortfolioProjects: "No portfolio projects are available in this category yet.",
   previousPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃមុន" : "Go to previous portfolio page",
   nextPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃបន្ទាប់" : "Go to next portfolio page",
   portfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃ" : "Go to portfolio page",
   portfolioUpdated: isKhmerPage ? "ស្នាដៃត្រូវបានធ្វើបច្ចុប្បន្នភាព" : "Portfolio projects updated",
+  proposalCopied: isKhmerPage ? "បានចម្លងសំណើរ។" : "Proposal copied.",
+  proposalTelegram: isKhmerPage
+    ? "បានចម្លងសំណើរ។ សូមបិទភ្ជាប់ក្នុង Telegram របស់ CamApp Digital ដើម្បីផ្ញើ។"
+    : "Proposal copied. Paste it in the CamApp Digital Telegram chat to send it.",
+  proposalCopyFallback: isKhmerPage
+    ? "មិនអាចចម្លងដោយស្វ័យប្រវត្តិបានទេ។ សូមជ្រើសអត្ថបទសំណើរ និងចម្លងដោយដៃ។"
+    : "Could not copy automatically. Please select the proposal text and copy it manually.",
 };
 
 const portfolioAssetBase = (() => {
@@ -533,6 +549,179 @@ form.addEventListener("change", (event) => {
   }
 });
 
+const getFieldValue = (name) => {
+  const field = form.elements[name];
+  if (!field) return "";
+  return field.value?.trim() || "";
+};
+
+const getSelectedOptionText = (name) => {
+  const field = form.elements[name];
+  return field?.selectedOptions?.[0]?.textContent.trim() || getFieldValue(name);
+};
+
+const getCheckedValue = (name) => {
+  const field = form.querySelector(`input[name="${name}"]:checked`);
+  return field?.value || "";
+};
+
+const getLogoUses = () =>
+  Array.from(form.querySelectorAll('input[name="logoUse"]:checked')).map((field) => field.value);
+
+const makeProposalId = () => {
+  const now = new Date();
+  const date =
+    String(now.getFullYear()) +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0");
+  const time = String(now.getHours()).padStart(2, "0") + String(now.getMinutes()).padStart(2, "0");
+  return `CAM-${date}-${time}`;
+};
+
+const proposalLabels = () =>
+  isKhmerPage
+    ? {
+        id: "លេខសំណើរ",
+        date: "កាលបរិច្ឆេទ",
+        client: "ឈ្មោះអតិថិជន",
+        logo: "ឈ្មោះឡូហ្គោ",
+        phone: "លេខទូរស័ព្ទ / Telegram",
+        email: "អ៊ីមែល",
+        category: "ប្រភេទអាជីវកម្ម",
+        package: "កញ្ចប់ដែលបានជ្រើស",
+        type: "ប្រភេទគម្រោង",
+        description: "ការពិពណ៌នាអាជីវកម្ម",
+        services: "ផលិតផល ឬសេវាកម្ម",
+        customers: "អតិថិជនគោលដៅ",
+        style: "រចនាប័ទ្មឡូហ្គោ",
+        colors: "ពណ៌ដែលចូលចិត្ត",
+        avoid: "ពណ៌ដែលត្រូវជៀសវាង",
+        text: "អត្ថបទក្នុងឡូហ្គោ",
+        use: "កន្លែងប្រើប្រាស់",
+        empty: "មិនបានបញ្ជាក់",
+        title: "សំណើររចនាឡូហ្គោ",
+        next: "ជំហានបន្ទាប់៖ CamApp Digital នឹងពិនិត្យសំណើរ ហើយបញ្ជាក់វិសាលភាព ពេលវេលា និងការទូទាត់ មុនពេលចាប់ផ្តើមរចនា។",
+      }
+    : {
+        id: "Proposal ID",
+        date: "Date",
+        client: "Client name",
+        logo: "Logo name",
+        phone: "Phone / Telegram",
+        email: "Email",
+        category: "Business category",
+        package: "Selected package",
+        type: "Project type",
+        description: "Business description",
+        services: "Products or services",
+        customers: "Target customers",
+        style: "Preferred logo style",
+        colors: "Preferred colors",
+        avoid: "Colors to avoid",
+        text: "Text to include",
+        use: "Logo usage",
+        empty: "Not provided",
+        title: "Logo Design Proposal",
+        next: "Next step: CamApp Digital will review this request and confirm scope, timeline, and payment details before design begins.",
+      };
+
+const buildProposal = () => {
+  const labels = proposalLabels();
+  const id = makeProposalId();
+  const date = new Date().toLocaleDateString(isKhmerPage ? "km-KH" : "en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  const values = {
+    [labels.client]: getFieldValue("fullName"),
+    [labels.logo]: getFieldValue("businessName"),
+    [labels.phone]: getFieldValue("phone"),
+    [labels.email]: getFieldValue("email") || labels.empty,
+    [labels.category]: getSelectedOptionText("businessCategory"),
+    [labels.package]: getSelectedOptionText("selectedPackage"),
+    [labels.type]: getCheckedValue("projectType"),
+    [labels.description]: getFieldValue("businessDescription"),
+    [labels.services]: getFieldValue("productsServices"),
+    [labels.customers]: getFieldValue("targetCustomers"),
+    [labels.style]: getSelectedOptionText("logoStyle"),
+    [labels.colors]: getFieldValue("preferredColors") || labels.empty,
+    [labels.avoid]: getFieldValue("colorsAvoid") || labels.empty,
+    [labels.text]: getFieldValue("logoText") || labels.empty,
+    [labels.use]: getLogoUses().join(", "),
+  };
+
+  const title = `${labels.title}: ${values[labels.logo]}`;
+  const text = [
+    `CamApp Digital - ${labels.title}`,
+    `${labels.id}: ${id}`,
+    `${labels.date}: ${date}`,
+    "",
+    ...Object.entries(values).map(([label, value]) => `${label}: ${value || labels.empty}`),
+    "",
+    labels.next,
+  ].join("\n");
+
+  return { id, date, title, values, text };
+};
+
+const renderProposal = (proposal) => {
+  latestProposalText = proposal.text;
+  if (proposalTitle) proposalTitle.textContent = proposal.title;
+  if (proposalSummary) {
+    proposalSummary.textContent = isKhmerPage
+      ? "នេះគឺជាសំណើររចនាឡូហ្គោដែលបានបង្កើតពីព័ត៌មានរបស់អ្នក។"
+      : "This proposal preview was generated from the client’s submitted information.";
+  }
+  if (proposalId) proposalId.textContent = `${proposalLabels().id}: ${proposal.id}`;
+  if (proposalDate) proposalDate.textContent = `${proposalLabels().date}: ${proposal.date}`;
+  if (proposalFields) {
+    const labels = proposalLabels();
+    proposalFields.replaceChildren();
+    Object.entries(proposal.values).forEach(([label, value]) => {
+      const item = document.createElement("div");
+      const term = document.createElement("dt");
+      const detail = document.createElement("dd");
+      term.textContent = label;
+      detail.textContent = value || labels.empty;
+      item.append(term, detail);
+      proposalFields.append(item);
+    });
+  }
+  if (proposalStatus) proposalStatus.textContent = "";
+};
+
+const copyProposalText = async () => {
+  if (!latestProposalText) return false;
+  const fallbackCopy = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = latestProposalText;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.inset = "0 auto auto -9999px";
+    document.body.append(textarea);
+    textarea.select();
+    try {
+      return document.execCommand("copy");
+    } finally {
+      textarea.remove();
+    }
+  };
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(latestProposalText);
+    } else if (!fallbackCopy()) {
+      throw new Error("Clipboard copy failed");
+    }
+    if (proposalStatus) proposalStatus.textContent = copy.proposalCopied;
+    return true;
+  } catch (error) {
+    if (proposalStatus) proposalStatus.textContent = copy.proposalCopyFallback;
+    return false;
+  }
+};
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   formStatus.textContent = "";
@@ -562,6 +751,8 @@ form.addEventListener("submit", (event) => {
   formStatus.textContent = copy.sending;
 
   window.setTimeout(() => {
+    const proposal = buildProposal();
+    renderProposal(proposal);
     submitButton.classList.remove("is-loading");
     submitButton.disabled = false;
     form.hidden = true;
@@ -573,6 +764,14 @@ form.addEventListener("submit", (event) => {
   }, 700);
 });
 
+copyProposalButton?.addEventListener("click", copyProposalText);
+
+sendTelegramButton?.addEventListener("click", async () => {
+  const telegramWindow = window.open(contactLinks.telegram, "_blank", "noopener,noreferrer");
+  const copied = await copyProposalText();
+  if (proposalStatus && copied && telegramWindow) proposalStatus.textContent = copy.proposalTelegram;
+});
+
 document.querySelector("[data-new-inquiry]").addEventListener("click", () => {
   form.reset();
   form.hidden = false;
@@ -580,6 +779,9 @@ document.querySelector("[data-new-inquiry]").addEventListener("click", () => {
   selectionDisplay.hidden = true;
   packageCards.forEach((card) => card.classList.remove("is-selected"));
   if (fileName) fileName.textContent = copy.defaultFileName;
+  if (proposalFields) proposalFields.replaceChildren();
+  if (proposalStatus) proposalStatus.textContent = "";
+  latestProposalText = "";
   formStatus.textContent = "";
   form.querySelector("input").focus();
 });

@@ -11,7 +11,7 @@
     <title>សេវារចនាឡូហ្គោអាជីព | CamApp Digital</title>
     <link rel="icon" href="../assets/camapp-logo.png" />
     <link rel="preload" as="image" href="../assets/portfolio-coffee.jpg" />
-  <link rel="stylesheet" href="../logo-design.css?v=15" />
+  <link rel="stylesheet" href="../logo-design.css?v=16" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">រំលងទៅមាតិកាសំខាន់</a>
@@ -459,11 +459,33 @@
               </button>
             </form>
 
-            <div class="success-panel" data-success-panel hidden tabindex="-1">
+            <div class="success-panel proposal-panel" data-success-panel hidden tabindex="-1">
+              <div class="proposal-brand">
+                <img src="../assets/camapp-logo.png" alt="" width="42" height="42" />
+                <div>
+                  <span>CamApp Digital</span>
+                  <small>សំណើររចនាឡូហ្គោ</small>
+                </div>
+              </div>
               <span class="success-mark" aria-hidden="true">✓</span>
-              <h3>សូមអរគុណ។</h3>
-              <p>សំណើរចនាឡូហ្គោរបស់អ្នកត្រូវបានទទួលហើយ។ CamApp Digital នឹងពិនិត្យព័ត៌មានរបស់អ្នក ហើយទាក់ទងអ្នកឆាប់ៗនេះ។</p>
-              <button class="button button-outline" type="button" data-new-inquiry>ផ្ញើសំណើមួយទៀត</button>
+              <h3 data-proposal-title>សំណើររបស់អ្នកបានបង្កើតរួចហើយ។</h3>
+              <p data-proposal-summary>ពិនិត្យមើលសំណើរខាងក្រោម បន្ទាប់មកផ្ញើទៅ CamApp Digital តាម Telegram។</p>
+              <div class="proposal-preview" data-proposal-preview>
+                <div class="proposal-meta">
+                  <span data-proposal-id></span>
+                  <span data-proposal-date></span>
+                </div>
+                <dl class="proposal-fields" data-proposal-fields></dl>
+                <div class="proposal-note">
+                  CamApp Digital នឹងពិនិត្យសំណើរនេះ ហើយបញ្ជាក់វិសាលភាព ពេលវេលា និងព័ត៌មានទូទាត់ មុនពេលចាប់ផ្តើមរចនា។
+                </div>
+              </div>
+              <div class="proposal-actions">
+                <button class="button button-accent" type="button" data-send-telegram>ផ្ញើទៅ Telegram</button>
+                <button class="button button-outline" type="button" data-copy-proposal>ចម្លងសំណើរ</button>
+                <button class="button button-ghost" type="button" data-new-inquiry>បង្កើតសំណើរថ្មី</button>
+              </div>
+              <p class="proposal-status" data-proposal-status role="status" aria-live="polite"></p>
             </div>
           </div>
         </div>
@@ -501,6 +523,6 @@
     </div>
 
     <script src="../portfolio-data.js?v=2"></script>
-    <script src="../logo-design.js?v=9"></script>
+    <script src="../logo-design.js?v=10"></script>
   </body>
 </html>
