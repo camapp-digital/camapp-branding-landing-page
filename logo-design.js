@@ -188,7 +188,7 @@ const createPortfolioCard = (project) => {
   const ctaLabel = isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business";
 
   return `
-    <article class="project-card reveal" data-portfolio-card data-category="${project.businessCategory}">
+    <article class="project-card" data-portfolio-card data-category="${project.businessCategory}">
       <div class="project-image">
         <img src="${imagePath}" alt="${altText}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" />
       </div>
@@ -289,7 +289,6 @@ const renderVisiblePortfolioProjects = ({ shouldScroll = false, shouldUpdateUrl 
     : `<p class="portfolio-empty-state">${copy.noPortfolioProjects}</p>`;
 
   projectCards = Array.from(portfolioGrid.querySelectorAll("[data-portfolio-card]"));
-  revealElements(projectCards);
   renderPortfolioPagination(totalPages);
   updatePortfolioLiveRegion(visibleProjects.length, filteredProjects.length, totalPages);
 
