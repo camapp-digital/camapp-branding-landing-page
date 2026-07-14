@@ -95,7 +95,7 @@ const buildTelegramMessage = () => {
     "",
     `Name: ${values.name}`,
     `Business: ${values.business}`,
-    `Phone or Telegram: ${values.contact}`,
+    `Phone (Telegram): ${values.contact}`,
     `Service Needed: ${values.service}`,
     "",
     "Project Notes:",
@@ -104,9 +104,6 @@ const buildTelegramMessage = () => {
     "Submitted from the CamApp Digital website.",
   ].join("\n");
 };
-
-const buildTelegramShareUrl = (message) =>
-  `https://telegram.me/share/url?url=${encodeURIComponent("https://camapp.dev/")}&text=${encodeURIComponent(message)}`;
 
 const copyText = async (text) => {
   try {
@@ -152,21 +149,28 @@ contactForm?.addEventListener("submit", (event) => {
   if (!validateContactForm()) return;
 
   latestTelegramMessage = buildTelegramMessage();
-  const telegramShareUrl = buildTelegramShareUrl(latestTelegramMessage);
   if (telegramLink) telegramLink.href = telegramDirectUrl;
 
   submitButton.disabled = true;
   submitButton.textContent = "Preparing Telegram…";
-  const telegramWindow = window.open(telegramShareUrl, "_blank");
+  const copyPromise = copyText(latestTelegramMessage);
+  const telegramWindow = window.open(telegramDirectUrl, "_blank");
   if (telegramWindow) telegramWindow.opener = null;
   submitButton.textContent = "Submit Request";
   submitButton.disabled = false;
 
   if (telegramWindow) {
     if (formStatus) {
-      formStatus.textContent =
-        "Telegram opened with your project request. Choose CamApp Digital, review the message, and press Send.";
+      formStatus.textContent = "Telegram opened. Preparing your request text...";
     }
+    copyPromise.then((copied) => {
+      if (formStatus) {
+        formStatus.textContent = copied
+          ? "Telegram opened. The request was copied, so paste it in the CamApp Digital chat and press Send."
+          : "Telegram opened. If the request was not copied, use the Copy Request button below.";
+      }
+      if (!copied && telegramFallback) telegramFallback.hidden = false;
+    });
     return;
   }
 
