@@ -9,6 +9,7 @@ const telegramFallback = document.querySelector("[data-telegram-fallback]");
 const telegramLink = document.querySelector("[data-telegram-link]");
 const copyRequestButton = document.querySelector("[data-copy-request]");
 const telegramUsername = "CamAppDigital";
+const telegramDirectUrl = `https://telegram.me/${telegramUsername}`;
 let latestTelegramMessage = "";
 
 const updateHeader = () => {
@@ -104,8 +105,8 @@ const buildTelegramMessage = () => {
   ].join("\n");
 };
 
-const buildTelegramUrl = (message) =>
-  `https://t.me/${telegramUsername}?text=${encodeURIComponent(message)}`;
+const buildTelegramShareUrl = (message) =>
+  `https://telegram.me/share/url?url=${encodeURIComponent("https://camapp.dev/")}&text=${encodeURIComponent(message)}`;
 
 const copyText = async (text) => {
   try {
@@ -151,19 +152,20 @@ contactForm?.addEventListener("submit", (event) => {
   if (!validateContactForm()) return;
 
   latestTelegramMessage = buildTelegramMessage();
-  const telegramUrl = buildTelegramUrl(latestTelegramMessage);
-  if (telegramLink) telegramLink.href = telegramUrl;
+  const telegramShareUrl = buildTelegramShareUrl(latestTelegramMessage);
+  if (telegramLink) telegramLink.href = telegramDirectUrl;
 
   submitButton.disabled = true;
   submitButton.textContent = "Preparing Telegram…";
-  const telegramWindow = window.open(telegramUrl, "_blank");
+  const telegramWindow = window.open(telegramShareUrl, "_blank");
   if (telegramWindow) telegramWindow.opener = null;
   submitButton.textContent = "Submit Request";
   submitButton.disabled = false;
 
   if (telegramWindow) {
     if (formStatus) {
-      formStatus.textContent = "Telegram opened with your project request. Please review the message and press Send.";
+      formStatus.textContent =
+        "Telegram opened with your project request. Choose CamApp Digital, review the message, and press Send.";
     }
     return;
   }
