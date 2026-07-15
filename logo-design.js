@@ -1,8 +1,11 @@
-// Update these two values when the verified CamApp Digital contact links are available.
+const landingConfig = window.camappLandingConfig || {};
+
+// Update these values when the verified CamApp Digital contact links are available.
 const contactLinks = {
-  telegram: "https://t.me/CamAppDigital",
+  telegram: "https://telegram.me/CamAppDigital",
   messenger: "https://m.me/CamAppDigital",
   facebook: "https://m.me/CamAppDigital",
+  ...landingConfig.contactLinks,
 };
 
 const trustStats = {
@@ -46,7 +49,7 @@ const fileInput = document.querySelector("[data-file-input]");
 const fileName = document.querySelector("[data-file-name]");
 const useFieldset = document.querySelector("[data-use-error]")?.closest("fieldset");
 const contactToast = document.querySelector("[data-contact-toast]");
-const storedPackageKey = "camappSelectedLogoPackage";
+const storedPackageKey = landingConfig.storedPackageKey || "camappSelectedLogoPackage";
 let latestProposalText = "";
 const isKhmerPage = document.documentElement.lang === "km";
 const portfolioData = window.camappPortfolioData || { categories: [], projects: [] };
@@ -65,7 +68,7 @@ const copy = {
   requiredFields: isKhmerPage
     ? "សូមបំពេញប្រអប់ចាំបាច់ដែលបានសម្គាល់។"
     : "Please complete the highlighted required fields.",
-  sending: isKhmerPage ? "កំពុងបង្កើតសំណើររបស់អ្នក..." : "Generating your proposal…",
+  sending: landingConfig.sendingText || (isKhmerPage ? "កំពុងបង្កើតសំណើររបស់អ្នក..." : "Generating your proposal…"),
   noPortfolioProjects: "No portfolio projects are available in this category yet.",
   previousPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃមុន" : "Go to previous portfolio page",
   nextPortfolioPage: isKhmerPage ? "ទៅទំព័រស្នាដៃបន្ទាប់" : "Go to next portfolio page",
@@ -83,6 +86,7 @@ const copy = {
 const portfolioAssetBase = (() => {
   const path = window.location.pathname;
   if (path.includes("/logo-design/en/")) return "../../assets";
+  if (path.includes("/branding-packages/")) return "../assets";
   if (path.includes("/logo-design/")) return "../assets";
   return "assets";
 })();
@@ -201,7 +205,9 @@ const createPortfolioCard = (project) => {
   const categoryLabel = isKhmerPage ? project.categoryLabelKm : project.categoryLabelEn;
   const description = isKhmerPage ? project.descriptionKm : project.descriptionEn;
   const altText = isKhmerPage ? project.altTextKm : project.altTextEn;
-  const ctaLabel = isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business";
+  const ctaLabel =
+    landingConfig.portfolioCtaLabel ||
+    (isKhmerPage ? "បង្កើតឡូហ្គោសម្រាប់អាជីវកម្មរបស់ខ្ញុំ" : "Create a Logo for My Business");
 
   return `
     <article class="project-card" data-portfolio-card data-category="${project.businessCategory}">
@@ -429,12 +435,12 @@ navigation.addEventListener("click", (event) => {
 renderPortfolio();
 setupPortfolioFilters();
 
-const packagePrices = {
+const packagePrices = landingConfig.packagePrices || {
   "Basic Package": "$49",
   "Standard Package": "$79",
   "Premium Package": "$229",
 };
-const packageLabels = {
+const packageLabels = landingConfig.packageLabels || {
   "Basic Package": isKhmerPage ? "កញ្ចប់ Basic" : "Basic Package",
   "Standard Package": isKhmerPage ? "កញ្ចប់ Standard" : "Standard Package",
   "Premium Package": isKhmerPage ? "កញ្ចប់ Premium" : "Premium Package",
@@ -578,8 +584,8 @@ const makeProposalId = () => {
   return `CAM-${date}-${time}`;
 };
 
-const proposalLabels = () =>
-  isKhmerPage
+const proposalLabels = () => {
+  const defaults = isKhmerPage
     ? {
         id: "លេខសំណើរ",
         date: "កាលបរិច្ឆេទ",
@@ -625,6 +631,9 @@ const proposalLabels = () =>
         next: "Next step: CamApp Digital will review this request and confirm scope, timeline, and payment details before design begins.",
       };
 
+  return { ...defaults, ...(landingConfig.proposalLabels || {}) };
+};
+
 const buildProposal = () => {
   const labels = proposalLabels();
   const id = makeProposalId();
@@ -669,9 +678,11 @@ const renderProposal = (proposal) => {
   latestProposalText = proposal.text;
   if (proposalTitle) proposalTitle.textContent = proposal.title;
   if (proposalSummary) {
-    proposalSummary.textContent = isKhmerPage
-      ? "នេះគឺជាសំណើររចនាឡូហ្គោដែលបានបង្កើតពីព័ត៌មានរបស់អ្នក។"
-      : "This proposal preview was generated from the client’s submitted information.";
+    proposalSummary.textContent =
+      landingConfig.proposalSummary ||
+      (isKhmerPage
+        ? "នេះគឺជាសំណើររចនាឡូហ្គោដែលបានបង្កើតពីព័ត៌មានរបស់អ្នក។"
+        : "This proposal preview was generated from the client’s submitted information.");
   }
   if (proposalId) proposalId.textContent = `${proposalLabels().id}: ${proposal.id}`;
   if (proposalDate) proposalDate.textContent = `${proposalLabels().date}: ${proposal.date}`;
