@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Lead Tracker | CamApp Digital Dashboard</title>
+  <meta name="description" content="Private lead tracking dashboard for CamApp Digital." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Khmer:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../dashboard.css" />
+  <script src="../dashboard-auth.js" defer></script>
+  <script src="lead-tracker.js" defer></script>
+</head>
+<body class="dashboard-page auth-pending">
+  <section class="auth-screen" data-auth-screen aria-labelledby="auth-title">
+    <div class="auth-card">
+      <img src="../../assets/camapp-logo.png" alt="CamApp Digital logo" width="58" height="58" />
+      <p class="eyebrow">Private access</p>
+      <h1 id="auth-title">Lead Tracker</h1>
+      <p>Create a local dashboard passcode on first use, then enter it to continue.</p>
+      <form class="auth-form" data-auth-form>
+        <label for="dashboard-passcode">Dashboard passcode</label>
+        <input id="dashboard-passcode" type="password" autocomplete="current-password" data-auth-passcode required />
+        <p class="auth-error" data-auth-error aria-live="polite"></p>
+        <button class="primary-action" type="submit" data-auth-submit>Unlock Lead Tracker</button>
+      </form>
+      <small>This passcode is stored only in this browser. Use server authentication before storing sensitive data online.</small>
+    </div>
+  </section>
+
+  <a class="skip-link" href="#main">Skip to lead tracker</a>
+
+  <header class="dashboard-header">
+    <div class="dashboard-shell dashboard-header__inner">
+      <a class="dashboard-brand" href="../" aria-label="Back to dashboard home">
+        <img src="../../assets/camapp-logo.png" alt="CamApp Digital logo" width="48" height="48" />
+        <span>
+          <strong>CamApp Digital</strong>
+          <small>Lead Tracker</small>
+        </span>
+      </a>
+      <nav class="dashboard-top-nav" aria-label="Dashboard">
+        <a href="../">Dashboard home</a>
+        <a href="https://camapp.dev/" rel="noopener">Public site</a>
+        <button class="logout-button" type="button" data-auth-logout>Lock</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="lead-dashboard">
+    <section class="dashboard-shell lead-hero">
+      <div>
+        <p class="eyebrow">Sales pipeline</p>
+        <h1>Lead Tracker</h1>
+        <p>
+          Track potential clients, plan follow-ups, and monitor progress toward your
+          $2,000/month revenue goal.
+        </p>
+      </div>
+      <a class="primary-action" href="#lead-form">Add new lead</a>
+    </section>
+
+    <section class="dashboard-shell metrics-grid" aria-label="Lead summary">
+      <article class="metric-card">
+        <span>Total Estimated Value</span>
+        <strong data-total-estimated>$0</strong>
+      </article>
+      <article class="metric-card">
+        <span>Total Won Value</span>
+        <strong data-total-won>$0</strong>
+      </article>
+      <article class="metric-card metric-card--attention">
+        <span>Follow-ups Due</span>
+        <strong data-followups-due>0</strong>
+      </article>
+      <article class="metric-card">
+        <span>$2,000 Monthly Goal</span>
+        <strong data-goal-progress>0%</strong>
+        <div class="goal-meter" aria-hidden="true">
+          <span data-goal-meter></span>
+        </div>
+      </article>
+    </section>
+
+    <section class="dashboard-shell status-section" aria-labelledby="status-title">
+      <div class="section-heading section-heading--row">
+        <div>
+          <p class="eyebrow">Pipeline</p>
+          <h2 id="status-title">Leads by status</h2>
+        </div>
+        <p class="status-section__hint">Follow-ups due today or earlier are highlighted in gold.</p>
+      </div>
+      <div class="status-grid" data-status-counts aria-live="polite"></div>
+    </section>
+
+    <section class="dashboard-shell tracker-layout">
+      <aside class="lead-panel" aria-labelledby="form-title">
+        <div class="section-heading">
+          <p class="eyebrow">Lead details</p>
+          <h2 id="form-title">Add or edit lead</h2>
+        </div>
+
+        <form id="lead-form" class="lead-form" novalidate>
+          <input type="hidden" id="lead-id" />
+
+          <div class="form-grid">
+            <label>
+              <span>Client name *</span>
+              <input id="client-name" name="clientName" type="text" autocomplete="name" required />
+            </label>
+
+            <label>
+              <span>Business name</span>
+              <input id="business-name" name="businessName" type="text" autocomplete="organization" />
+            </label>
+
+            <label>
+              <span>Contact method *</span>
+              <select id="contact-method" name="contactMethod" required>
+                <option value="">Select method</option>
+                <option>Telegram</option>
+                <option>Facebook</option>
+                <option>Phone</option>
+                <option>Email</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Contact detail *</span>
+              <input id="contact-detail" name="contactDetail" type="text" required />
+            </label>
+
+            <label>
+              <span>Service interested in *</span>
+              <select id="service" name="service" required>
+                <option value="">Select service</option>
+                <option>Logo Design</option>
+                <option>Branding Package</option>
+                <option>Website</option>
+                <option>Landing Page</option>
+                <option>Poster</option>
+                <option>Social Media Design</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Lead source</span>
+              <select id="lead-source" name="leadSource">
+                <option value="">Select source</option>
+                <option>Facebook</option>
+                <option>Referral</option>
+                <option>Telegram</option>
+                <option>Website Form</option>
+                <option>Direct Message</option>
+                <option>Other</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Estimated project value</span>
+              <input id="estimated-value" name="estimatedValue" type="number" min="0" step="1" inputmode="decimal" placeholder="Example: 299" />
+            </label>
+
+            <label>
+              <span>Status *</span>
+              <select id="status" name="status" required>
+                <option>New</option>
+                <option>Contacted</option>
+                <option>Interested</option>
+                <option>Proposal Sent</option>
+                <option>Waiting Payment</option>
+                <option>Won</option>
+                <option>Lost</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Last contact date</span>
+              <input id="last-contact-date" name="lastContactDate" type="date" />
+            </label>
+
+            <label>
+              <span>Next follow-up date</span>
+              <input id="next-follow-up-date" name="nextFollowUpDate" type="date" />
+            </label>
+          </div>
+
+          <label class="form-field-full">
+            <span>Notes</span>
+            <textarea id="notes" name="notes" rows="4" placeholder="Add client needs, package fit, next steps, and follow-up context."></textarea>
+          </label>
+
+          <p class="form-error" data-form-error aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button class="primary-action" type="submit" data-save-button>Save Lead</button>
+            <button class="secondary-action" type="button" data-reset-form>Clear</button>
+          </div>
+        </form>
+      </aside>
+
+      <section class="lead-list-panel" aria-labelledby="lead-list-title">
+        <div class="section-heading">
+          <p class="eyebrow">Daily view</p>
+          <h2 id="lead-list-title">Lead list</h2>
+        </div>
+
+        <div class="lead-controls" aria-label="Lead filters">
+          <label>
+            <span>Search</span>
+            <input type="search" data-search placeholder="Search client, business, contact, notes..." />
+          </label>
+          <label>
+            <span>Status</span>
+            <select data-status-filter>
+              <option value="all">All statuses</option>
+            </select>
+          </label>
+          <label>
+            <span>Service</span>
+            <select data-service-filter>
+              <option value="all">All services</option>
+            </select>
+          </label>
+          <button class="secondary-action lead-controls__export" type="button" data-export-csv>Export CSV</button>
+        </div>
+
+        <div class="lead-list-status" data-list-status aria-live="polite"></div>
+        <div class="lead-list" data-lead-list></div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
